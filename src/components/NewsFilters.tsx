@@ -1,6 +1,6 @@
 import { Calendar, Search } from 'lucide-react';
 import { useNewsStore } from '../hooks/useNewsStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchGuardianCategories, fetchNYTCategories } from '../lib/api';
 
 export function NewsFilters() {
@@ -18,12 +18,15 @@ export function NewsFilters() {
     setNYTCategories,
   } = useNewsStore();
 
+  const [showAllCategories, setShowAllCategories] = useState(false);
+
   // Fetch Guardian and NYT categories on mount
   useEffect(() => {
     fetchGuardianCategories().then((categories) => setGuardianCategories(categories));
     fetchNYTCategories().then((categories) => setNYTCategories(categories));
   }, [setGuardianCategories, setNYTCategories]);
 
+  // Combine all categories and remove duplicates
   const allCategories = [
     ...guardianCategories.map((cat) => ({ id: cat.id, name: cat.webTitle, source: 'guardian' })),
     ...nytCategories.map((cat) => ({ id: cat.section, name: cat.display_name, source: 'nyt' })),
@@ -35,6 +38,23 @@ export function NewsFilters() {
     { id: 'sports', name: 'Sports', source: 'newsapi' },
     { id: 'technology', name: 'Technology', source: 'newsapi' },
   ];
+
+  // Remove duplicates by creating a Set of unique category names
+  const uniqueCategories = Array.from(
+    new Map(allCategories.map((cat) => [cat.name.toLowerCase(), cat])).values()
+  );
+
+  // Show only the first 30 categories initially
+  const visibleCategories = showAllCategories ? uniqueCategories : uniqueCategories.slice(0, 30);
+
+  // Toggle category selection
+  const handleCategoryClick = (categoryId: string) => {
+    if (filters.category === categoryId) {
+      setCategory(undefined); // Unselect if the same category is clicked again
+    } else {
+      setCategory(categoryId); // Select the category
+    }
+  };
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 mb-6">
@@ -64,7 +84,7 @@ export function NewsFilters() {
 
         {/* Categories */}
         <div className="flex flex-wrap gap-2">
-          {allCategories.map((cat) => (
+          {visibleCategories.map((cat) => (
             <button
               key={`${cat.source}-${cat.id}`}
               className={`px-3 py-1 rounded-full text-sm ${
@@ -72,11 +92,19 @@ export function NewsFilters() {
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
-              onClick={() => setCategory(cat.id)}
+              onClick={() => handleCategoryClick(cat.id)}
             >
               {cat.name}
             </button>
           ))}
+          {uniqueCategories.length > 30 && (
+            <button
+              className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+              onClick={() => setShowAllCategories(!showAllCategories)}
+            >
+              {showAllCategories ? 'Show less' : 'Show more'}
+            </button>
+          )}
         </div>
 
         {/* Date Range */}

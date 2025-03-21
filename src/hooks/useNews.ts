@@ -28,8 +28,8 @@ export function useNews() {
 
   let articles: NewsArticle[] = [
     ...(newsApiQuery.data || []), // NewsAPI first
-    ...(nytQuery.data || []), // New York Times second
-    ...(guardianQuery.data || []), // The Guardian last
+    ...(nytQuery.data || []), // NYT second
+    ...(guardianQuery.data || []), // Guardian last
   ];
 
   // Filter by author locally
