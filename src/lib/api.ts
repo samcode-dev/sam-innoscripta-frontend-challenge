@@ -1,7 +1,6 @@
 import axios from 'axios';
 import type { NewsArticle, NewsApiArticle, NYTArticle, GuardianArticle, GuardianCategory, NYTCategory } from '../types';
 
-// const NEWS_API_KEY = '3ce4bd4742564153bf7341a575992dee';
 const NEWS_API_KEY = 'a3906f4f790f4f2b8c917eb2f3a5621d';
 const NYT_API_KEY = 'MNLdxGlQsQGaETb0OTW5JYFnzwnvUzxQ';
 const GUARDIAN_API_KEY = '4046aeeb-f1f2-4cd6-b463-b799546cbb77';
@@ -62,11 +61,17 @@ export const fetchNewsApiArticles = async (
   if (to) params.to = to;
   if (author) params.author = author;
 
+  // Use /everything for search queries, /top-headlines for categories or default
   const endpoint = query ? '/everything' : '/top-headlines';
+
+  // Add country=us only for /top-headlines (default or category selection)
+  if (!query && endpoint === '/top-headlines') {
+    params.country = 'us';
+  }
+
   const response = await newsApiClient.get<{ articles: NewsApiArticle[] }>(endpoint, {
     params: {
       ...params,
-      country: 'us',
       pageSize: 20,
     },
   });
