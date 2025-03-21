@@ -48,4 +48,4 @@ This is a frontend application built with React Typescript.
     docker rm <container-id>
 
 2. **Remove the image:**
-    docker rmi my-frontend-app
+    docker rmi sam-innoscripta-news-app
