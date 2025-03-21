@@ -45,7 +45,7 @@ export function NewsFilters() {
   );
 
   // Show only the first 30 categories initially
-  const visibleCategories = showAllCategories ? uniqueCategories : uniqueCategories.slice(0, 20);
+  const visibleCategories = showAllCategories ? uniqueCategories : uniqueCategories.slice(0, 30);
 
   // Toggle category selection
   const handleCategoryClick = (categoryId: string) => {
@@ -123,24 +123,28 @@ export function NewsFilters() {
         </div>
 
         {/* Date Range */}
-        <div className="flex gap-4 items-center">
-          <Calendar className="text-gray-400 h-5 w-5" />
-          <input
-            type="date"
-            className="border rounded-lg px-3 py-2"
-            value={filters.fromDate || ''}
-            onChange={(e) => setDateRange(e.target.value, filters.toDate)}
-          />
-          <span className="text-gray-400">to</span>
-          <input
-            type="date"
-            className="border rounded-lg px-3 py-2"
-            value={filters.toDate || ''}
-            onChange={(e) => setDateRange(filters.fromDate, e.target.value)}
-          />
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <Calendar className="text-gray-400 h-5 w-5" />
+            <input
+              type="date"
+              className="w-full md:w-auto border rounded-lg px-3 py-2"
+              value={filters.fromDate || ''}
+              onChange={(e) => setDateRange(e.target.value, filters.toDate)}
+            />
+          </div>
+          <span className="text-gray-400 hidden md:block">to</span>
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <input
+              type="date"
+              className="w-full md:w-auto border rounded-lg px-3 py-2"
+              value={filters.toDate || ''}
+              onChange={(e) => setDateRange(filters.fromDate, e.target.value)}
+            />
+          </div>
           {(filters.fromDate || filters.toDate) && (
             <button
-              className="px-3 py-2 rounded-lg text-sm bg-red-100 text-red-600 hover:bg-red-200 transition-colors flex items-center gap-1"
+              className="w-full md:w-auto px-3 py-2 rounded-lg text-sm bg-red-100 text-red-600 hover:bg-red-200 transition-colors flex items-center justify-center gap-1"
               onClick={clearDateFilter}
             >
               <X className="h-4 w-4" />
