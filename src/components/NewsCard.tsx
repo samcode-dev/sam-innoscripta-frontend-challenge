@@ -1,4 +1,3 @@
-import React from 'react';
 import { format } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
 import type { NewsArticle } from '../types';
