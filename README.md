@@ -1,4 +1,4 @@
-# My Frontend Application
+# Sam Innoscripta News Frontend Application
 
 This is a frontend application built with React Typescript.
 
