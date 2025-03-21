@@ -1,4 +1,4 @@
-import { Calendar, Search } from 'lucide-react';
+import { Calendar, Search, X } from 'lucide-react';
 import { useNewsStore } from '../hooks/useNewsStore';
 import { useEffect, useState } from 'react';
 import { fetchGuardianCategories, fetchNYTCategories } from '../lib/api';
@@ -45,7 +45,7 @@ export function NewsFilters() {
   );
 
   // Show only the first 30 categories initially
-  const visibleCategories = showAllCategories ? uniqueCategories : uniqueCategories.slice(0, 30);
+  const visibleCategories = showAllCategories ? uniqueCategories : uniqueCategories.slice(0, 20);
 
   // Toggle category selection
   const handleCategoryClick = (categoryId: string) => {
@@ -56,30 +56,45 @@ export function NewsFilters() {
     }
   };
 
+  // Clear date filter
+  const clearDateFilter = () => {
+    setDateRange(undefined, undefined);
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg p-4 mb-6">
       <div className="flex flex-col gap-4">
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
-          <input
-            type="text"
-            placeholder="Search news..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={filters.query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
-
-        {/* Author Filter */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Filter by author..."
-            className="w-full pl-4 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={filters.author || ''}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
+        {/* Search and Author Filter */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+              Search News
+            </label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <input
+                id="search"
+                type="text"
+                placeholder="Search news..."
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={filters.query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1">
+              Filter by Author
+            </label>
+            <input
+              id="author"
+              type="text"
+              placeholder="Filter by author..."
+              className="w-full pl-4 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={filters.author || ''}
+              onChange={(e) => setAuthor(e.target.value)}
+            />
+          </div>
         </div>
 
         {/* Categories */}
@@ -123,6 +138,15 @@ export function NewsFilters() {
             value={filters.toDate || ''}
             onChange={(e) => setDateRange(filters.fromDate, e.target.value)}
           />
+          {(filters.fromDate || filters.toDate) && (
+            <button
+              className="px-3 py-2 rounded-lg text-sm bg-red-100 text-red-600 hover:bg-red-200 transition-colors flex items-center gap-1"
+              onClick={clearDateFilter}
+            >
+              <X className="h-4 w-4" />
+              Clear
+            </button>
+          )}
         </div>
 
         {/* Sources */}

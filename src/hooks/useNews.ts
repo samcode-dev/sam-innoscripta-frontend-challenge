@@ -39,6 +39,20 @@ export function useNews() {
     );
   }
 
+  // Filter NYT articles by date locally
+  if (filters.fromDate || filters.toDate) {
+    articles = articles.filter((article) => {
+      const publishedAt = new Date(article.publishedAt);
+      const fromDate = filters.fromDate ? new Date(filters.fromDate) : null;
+      const toDate = filters.toDate ? new Date(filters.toDate) : null;
+
+      return (
+        (!fromDate || publishedAt >= fromDate) &&
+        (!toDate || publishedAt <= toDate)
+      );
+    });
+  }
+
   return {
     articles,
     isLoading,
