@@ -1,8 +1,8 @@
 import axios from 'axios';
 import type { NewsArticle, NewsApiArticle, NYTArticle, GuardianArticle, GuardianCategory, NYTCategory } from '../types';
 
-const NEWS_API_KEY = 'a3906f4f790f4f2b8c917eb2f3a5621d';
-const NYT_API_KEY = 'uvXeQ3yYDdhDsKcSfRWkUAtOHN6tIVYe';
+const NEWS_API_KEY = '3ce4bd4742564153bf7341a575992dee';
+const NYT_API_KEY = 'MNLdxGlQsQGaETb0OTW5JYFnzwnvUzxQ';
 const GUARDIAN_API_KEY = '4046aeeb-f1f2-4cd6-b463-b799546cbb77';
 
 // NewsAPI
