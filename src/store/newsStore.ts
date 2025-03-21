@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { NewsSource } from '../lib/api';
+import { NewsSource } from '../types';
 
 interface NewsFilters {
   query: string;

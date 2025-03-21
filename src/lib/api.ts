@@ -61,7 +61,7 @@ export const fetchNewsApiArticles = async (
   if (to) params.to = to;
   if (author) params.author = author;
 
-  // Use /everything for search queries, /top-headlines for categories or default
+  // /everything for search queries, /top-headlines for categories or default
   const endpoint = query ? '/everything' : '/top-headlines';
 
   // Add country=us only for /top-headlines (default or category selection)
