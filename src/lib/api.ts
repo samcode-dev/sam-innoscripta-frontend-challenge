@@ -1,7 +1,8 @@
 import axios from 'axios';
-import type { NewsArticle, NewsApiArticle, NYTArticle, GuardianArticle } from '../types';
+import type { NewsArticle, NewsApiArticle, NYTArticle, GuardianArticle, GuardianCategory, NYTCategory } from '../types';
 
-const NEWS_API_KEY = '3ce4bd4742564153bf7341a575992dee';
+// const NEWS_API_KEY = '3ce4bd4742564153bf7341a575992dee';
+const NEWS_API_KEY = 'a3906f4f790f4f2b8c917eb2f3a5621d';
 const NYT_API_KEY = 'MNLdxGlQsQGaETb0OTW5JYFnzwnvUzxQ';
 const GUARDIAN_API_KEY = '4046aeeb-f1f2-4cd6-b463-b799546cbb77';
 
@@ -25,6 +26,27 @@ const guardianClient = axios.create({
 
 const DEFAULT_IMAGE_URL = 'https://via.placeholder.com/400x200?text=No+Image+Available';
 
+// Fetch Guardian categories
+export const fetchGuardianCategories = async (): Promise<GuardianCategory[]> => {
+  const response = await guardianClient.get<{ response: { results: GuardianCategory[] } }>('/sections', {
+    params: {
+      'api-key': GUARDIAN_API_KEY,
+    },
+  });
+  return response.data.response.results;
+};
+
+// Fetch NYT categories
+export const fetchNYTCategories = async (): Promise<NYTCategory[]> => {
+  const response = await nytClient.get<{ results: NYTCategory[] }>('/content/section-list.json', {
+    params: {
+      'api-key': NYT_API_KEY,
+    },
+  });
+  return response.data.results;
+};
+
+// Fetch NewsAPI articles
 export const fetchNewsApiArticles = async (
   query?: string,
   category?: string,
@@ -55,12 +77,13 @@ export const fetchNewsApiArticles = async (
     title: article.title,
     description: article.description,
     url: article.url,
-    imageUrl: article.urlToImage || DEFAULT_IMAGE_URL, // Use default image if none
+    imageUrl: article.urlToImage || DEFAULT_IMAGE_URL,
     publishedAt: article.publishedAt,
-    author: article.author || undefined, // Handle null case
+    author: article.author || undefined,
   }));
 };
 
+// Fetch NYT articles
 export const fetchNYTArticles = async (section = 'all'): Promise<NewsArticle[]> => {
   const response = await nytClient.get<{ results: NYTArticle[] }>(`/content/all/${section}.json`, {
     params: {
@@ -69,19 +92,20 @@ export const fetchNYTArticles = async (section = 'all'): Promise<NewsArticle[]> 
   });
 
   return response.data.results
-    .filter((article) => article.title && article.abstract) // Exclude articles without title or abstract
+    .filter((article) => article.title && article.abstract)
     .map((article) => ({
       id: article.uri,
       source: { id: 'nyt', name: 'New York Times' },
       title: article.title,
       description: article.abstract,
       url: article.url,
-      imageUrl: article.multimedia?.[0]?.url || DEFAULT_IMAGE_URL, // Use default image if none
+      imageUrl: article.multimedia?.[0]?.url || DEFAULT_IMAGE_URL,
       publishedAt: article.published_date,
-      author: article.byline?.replace(/^By /, '') || undefined, // Remove "By" prefix
+      author: article.byline?.replace(/^By /, '') || undefined,
     }));
 };
 
+// Fetch Guardian articles
 export const fetchGuardianArticles = async (
   query?: string,
   section?: string,
@@ -108,7 +132,7 @@ export const fetchGuardianArticles = async (
     title: article.webTitle,
     description: '',
     url: article.webUrl,
-    imageUrl: article.fields?.thumbnail || DEFAULT_IMAGE_URL, // Use default image if none
+    imageUrl: article.fields?.thumbnail || DEFAULT_IMAGE_URL,
     publishedAt: article.webPublicationDate,
   }));
 };
