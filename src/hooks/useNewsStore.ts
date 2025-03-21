@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { NewsSource } from '../types';
+import { NewsSource, GuardianCategory, NYTCategory } from '../types';
 
 interface NewsFilters {
   query: string;
@@ -18,6 +18,10 @@ interface NewsStore {
   toggleSource: (sourceId: string) => void;
   setAuthor: (author?: string) => void;
   availableSources: NewsSource[];
+  guardianCategories: GuardianCategory[];
+  nytCategories: NYTCategory[];
+  setGuardianCategories: (categories: GuardianCategory[]) => void;
+  setNYTCategories: (categories: NYTCategory[]) => void;
 }
 
 export const useNewsStore = create<NewsStore>((set) => ({
@@ -30,6 +34,8 @@ export const useNewsStore = create<NewsStore>((set) => ({
     { id: 'nyt', name: 'New York Times' },
     { id: 'guardian', name: 'The Guardian' },
   ],
+  guardianCategories: [],
+  nytCategories: [],
   setQuery: (query) =>
     set((state) => ({
       filters: { ...state.filters, query },
@@ -54,5 +60,13 @@ export const useNewsStore = create<NewsStore>((set) => ({
   setAuthor: (author) =>
     set((state) => ({
       filters: { ...state.filters, author },
+    })),
+  setGuardianCategories: (categories) =>
+    set(() => ({
+      guardianCategories: categories,
+    })),
+  setNYTCategories: (categories) =>
+    set(() => ({
+      nytCategories: categories,
     })),
 }));

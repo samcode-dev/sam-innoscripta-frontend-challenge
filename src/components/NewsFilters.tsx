@@ -1,18 +1,40 @@
 import { Calendar, Search } from 'lucide-react';
 import { useNewsStore } from '../hooks/useNewsStore';
-
-const categories = [
-  'business',
-  'entertainment',
-  'general',
-  'health',
-  'science',
-  'sports',
-  'technology',
-];
+import { useEffect } from 'react';
+import { fetchGuardianCategories, fetchNYTCategories } from '../lib/api';
 
 export function NewsFilters() {
-  const { filters, setQuery, setCategory, setDateRange, toggleSource, setAuthor, availableSources } = useNewsStore();
+  const {
+    filters,
+    setQuery,
+    setCategory,
+    setDateRange,
+    toggleSource,
+    setAuthor,
+    availableSources,
+    guardianCategories,
+    nytCategories,
+    setGuardianCategories,
+    setNYTCategories,
+  } = useNewsStore();
+
+  // Fetch Guardian and NYT categories on mount
+  useEffect(() => {
+    fetchGuardianCategories().then((categories) => setGuardianCategories(categories));
+    fetchNYTCategories().then((categories) => setNYTCategories(categories));
+  }, [setGuardianCategories, setNYTCategories]);
+
+  const allCategories = [
+    ...guardianCategories.map((cat) => ({ id: cat.id, name: cat.webTitle, source: 'guardian' })),
+    ...nytCategories.map((cat) => ({ id: cat.section, name: cat.display_name, source: 'nyt' })),
+    { id: 'business', name: 'Business', source: 'newsapi' },
+    { id: 'entertainment', name: 'Entertainment', source: 'newsapi' },
+    { id: 'general', name: 'General', source: 'newsapi' },
+    { id: 'health', name: 'Health', source: 'newsapi' },
+    { id: 'science', name: 'Science', source: 'newsapi' },
+    { id: 'sports', name: 'Sports', source: 'newsapi' },
+    { id: 'technology', name: 'Technology', source: 'newsapi' },
+  ];
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 mb-6">
@@ -42,17 +64,17 @@ export function NewsFilters() {
 
         {/* Categories */}
         <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
+          {allCategories.map((cat) => (
             <button
-              key={cat}
+              key={`${cat.source}-${cat.id}`}
               className={`px-3 py-1 rounded-full text-sm ${
-                filters.category === cat
+                filters.category === cat.id
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
-              onClick={() => setCategory(filters.category === cat ? undefined : cat)}
+              onClick={() => setCategory(cat.id)}
             >
-              {cat}
+              {cat.name}
             </button>
           ))}
         </div>

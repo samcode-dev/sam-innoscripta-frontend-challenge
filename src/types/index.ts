@@ -56,3 +56,24 @@ export interface GuardianArticle {
   };
   webPublicationDate: string;
 }
+
+// Add GuardianCategory interface
+export interface GuardianCategory {
+  id: string;
+  webTitle: string;
+  webUrl: string;
+  apiUrl: string;
+  editions: Array<{
+    id: string;
+    webTitle: string;
+    webUrl: string;
+    apiUrl: string;
+    code: string;
+  }>;
+}
+
+// Add NYTCategory interface
+export interface NYTCategory {
+  section: string;
+  display_name: string;
+}
